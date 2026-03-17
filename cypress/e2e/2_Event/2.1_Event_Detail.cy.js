@@ -1,125 +1,108 @@
-describe('Event Detail Page', () => {
+describe('Event Page', () => {
 
-   it('Login_Email&Pass_correct', () => {
-    /*Login เข้าสู่ระบบ */
-    cy.visit('http://dekdee2.informatics.buu.ac.th:7111/login')
-    cy.get('input[placeholder="Email"]')
-      .type('admin@admin.com')
-      .should('have.value', 'admin@admin.com')
-    cy.get('input[placeholder="Password"]')
-      .type('password')
-      .should('have.value', 'password')
-    cy.contains('button', 'Sign In').should('not.be.disabled').click()
-    cy.url().should('not.include', '/login')
+  beforeEach(() => {
+    cy.session('adminSession', () => {
+      cy.visit('https://eventra.kasecode.com/')
+      cy.get('input[placeholder="Email"]').type('admin@admin.com')
+      cy.get('input[placeholder="Password"]').type('Admin_Pass101')
+      cy.contains('button', 'Sign In').click()
+      cy.url().should('not.include', '/login')
+    })
+    cy.visit('https://eventra.kasecode.com/event')
+  })
 
-    /*ช่องค้นหา*/ 
-    cy.visit('http://dekdee2.informatics.buu.ac.th:7111/event')
+  // ==================== Search ====================
+
+  it('Event_Search_By_Name', () => {
     cy.get('input[placeholder="Search event..."]')
       .should('be.visible')
       .type('งานเลี้ยงส่งท้ายปีเก่า')
       .should('have.value', 'งานเลี้ยงส่งท้ายปีเก่า')
-    cy.get('button[aria-label="Search"]')
-      .should('be.visible')
-      .click()
-    cy.wait(3000)
-    cy.get('input[placeholder="Search event..."]')
-      .clear()
-      .should('have.value', '')
-    cy.get('button[aria-label="Search"]')
-      .should('be.visible')
-      .click()
-    cy.wait(3000)
-
-    /**Filter */
-    cy.contains('button', 'Filter')
-    .should('be.visible')
-    .click()
-
-    cy.contains('label', 'All')
-    .find('input')
-    .check()
-    .should('be.checked')
+    cy.get('button[aria-label="Search"]').click()
     cy.wait(2000)
-    cy.contains('label', 'All')
-    .find('input')
-    .uncheck()
-    .should('not.be.checked')
-
-    cy.wait(2000)
-   
-    cy.contains('label', 'ประชุม')
-    .find('input')
-    .check()
-    .should('be.checked')
-    cy.wait(2000)
-    cy.contains('label', 'ประชุม')
-    .find('input')
-    .uncheck()
-    .should('not.be.checked')
-
-    cy.wait(2000)
-    
-    cy.contains('label', 'สัมนา')
-    .find('input')
-    .check()
-    .should('be.checked')
-    cy.wait(2000)
-    cy.contains('label', 'สัมนา')
-    .find('input')
-    .uncheck()
-    .should('not.be.checked')
-
-    cy.wait(2000)
-
-    cy.contains('label', 'อบรม')
-    .find('input')
-    .check()
-    .should('be.checked')
-    cy.wait(2000)
-    cy.contains('label', 'อบรม')
-    .find('input')
-    .uncheck()
-    .should('not.be.checked')
-
-    cy.wait(2000)
-
-    cy.contains('label', 'Done')
-    .find('input')
-    .check()
-    .should('be.checked')
-    cy.wait(2000)
-    cy.contains('label', 'Done')
-    .find('input')
-    .uncheck()
-    .should('not.be.checked')
-
-    cy.wait(2000)
-
-    cy.contains('label', 'Ongoing')
-    .find('input')
-    .check()
-    .should('be.checked')
-    cy.wait(2000)
-    cy.contains('label', 'Ongoing')
-    .find('input')
-    .uncheck()
-    .should('not.be.checked')
-
-    cy.wait(2000)
-
-    cy.contains('label', 'Upcoming')
-    .find('input')
-    .check()
-    .should('be.checked')
-    cy.wait(2000)
-    cy.contains('label', 'Upcoming')
-    .find('input')
-    .uncheck()
-    .should('not.be.checked')
-
-    cy.contains('button', 'Filter')
-    .should('be.visible')
-    .click()
   })
-  
+
+  it('Event_Search_Clear', () => {
+    cy.get('input[placeholder="Search event..."]').type('งานเลี้ยงส่งท้ายปีเก่า')
+    cy.get('button[aria-label="Search"]').click()
+    cy.wait(1000)
+    cy.get('input[placeholder="Search event..."]').clear().should('have.value', '')
+    cy.get('button[aria-label="Search"]').click()
+    cy.wait(2000)
   })
+
+  // ==================== Filter ====================
+
+  it('Event_Filter_Category_All', () => {
+    cy.contains('button', 'Filter').click()
+    cy.contains('label', 'All').find('input').check().should('be.checked')
+    cy.wait(1000)
+    cy.contains('label', 'All').find('input').uncheck().should('not.be.checked')
+    cy.contains('button', 'Filter').click()
+  })
+
+  it('Event_Filter_Category_ประชุม', () => {
+    cy.contains('button', 'Filter').click()
+    cy.contains('label', 'ประชุม').find('input').check().should('be.checked')
+    cy.wait(1000)
+    cy.contains('label', 'ประชุม').find('input').uncheck().should('not.be.checked')
+    cy.contains('button', 'Filter').click()
+  })
+
+  it('Event_Filter_Category_สัมนา', () => {
+    cy.contains('button', 'Filter').click()
+    cy.contains('label', 'สัมนา').find('input').check().should('be.checked')
+    cy.wait(1000)
+    cy.contains('label', 'สัมนา').find('input').uncheck().should('not.be.checked')
+    cy.contains('button', 'Filter').click()
+  })
+
+  it('Event_Filter_Category_อบรม', () => {
+    cy.contains('button', 'Filter').click()
+    cy.contains('label', 'อบรม').find('input').check().should('be.checked')
+    cy.wait(1000)
+    cy.contains('label', 'อบรม').find('input').uncheck().should('not.be.checked')
+    cy.contains('button', 'Filter').click()
+  })
+
+  it('Event_Filter_Status_Done', () => {
+    cy.contains('button', 'Filter').click()
+    cy.contains('label', 'Done').find('input').check().should('be.checked')
+    cy.wait(1000)
+    cy.contains('label', 'Done').find('input').uncheck().should('not.be.checked')
+    cy.contains('button', 'Filter').click()
+  })
+
+  it('Event_Filter_Status_Ongoing', () => {
+    cy.contains('button', 'Filter').click()
+    cy.contains('label', 'Ongoing').find('input').check().should('be.checked')
+    cy.wait(1000)
+    cy.contains('label', 'Ongoing').find('input').uncheck().should('not.be.checked')
+    cy.contains('button', 'Filter').click()
+  })
+
+  it('Event_Filter_Status_Upcoming', () => {
+    cy.contains('button', 'Filter').click()
+    cy.contains('label', 'Upcoming').find('input').check().should('be.checked')
+    cy.wait(1000)
+    cy.contains('label', 'Upcoming').find('input').uncheck().should('not.be.checked')
+    cy.contains('button', 'Filter').click()
+  })
+
+  // ==================== Event Detail ====================
+
+  it('Event_Click_To_Detail', () => {
+    cy.get('table tbody tr').first().find('a').first().click()
+    cy.url().should('match', /\/event\/\d+/)
+    cy.wait(2000)
+  })
+
+  it('Event_Detail_Back_To_List', () => {
+    cy.get('table tbody tr').first().find('a').first().click()
+    cy.url().should('match', /\/event\/\d+/)
+    cy.wait(1000)
+    cy.go('back')
+    cy.url().should('include', '/event')
+  })
+
+})
